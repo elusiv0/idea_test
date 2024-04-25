@@ -72,4 +72,8 @@ public class Ticket {
     public String getDestination() {
         return this.destination;
     }
+
+    public String getCarrier() {
+        return this.carrier;
+    }
 }

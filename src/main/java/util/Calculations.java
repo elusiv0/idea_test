@@ -4,9 +4,7 @@ import model.Ticket;
 import model.Tickets;
 import parser.Parser;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Calculations {
@@ -28,14 +26,19 @@ public class Calculations {
         return filtered;
     }
 
-    public long findMinDuration(List<Ticket> ticketList) {
-        long min = Integer.MAX_VALUE;
+    public Map<String, Long> findMinDuration(List<Ticket> ticketList) {
+        Map<String, Long> mins = new HashMap<>();
 
         for (Ticket ticket : ticketList) {
-            min = Math.min(min, ticket.getDurationMillis());
+            String carrier = ticket.getCarrier();
+            if (mins.containsKey(carrier)) {
+                mins.put(carrier, Math.min(mins.get(carrier), ticket.getDurationMillis()));
+                continue;
+            }
+            mins.put(carrier, ticket.getDurationMillis());
         }
 
-        return min;
+        return mins;
     }
 
     public double differenceBetweenAverageAndMedian(List<Ticket> ticketList) {
