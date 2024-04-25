@@ -1,6 +1,8 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import loader.ResourceLoader;
 import model.Ticket;
 import parser.Parser;
+import util.Calculations;
 
 import java.io.File;
 import java.io.InputStream;
@@ -19,55 +21,35 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         String filePath = "tickets.json";
-        Parser parse = new Parser();
+        String origin = "VVO";
+        String destination = "TLV";
+        ObjectMapper objectMapper = new ObjectMapper();
+        ResourceLoader resourceLoader = new ResourceLoader(filePath);
+        Parser parser = new Parser(objectMapper, resourceLoader);
+        Calculations calculations = new Calculations(parser);
+        List<Ticket> tickets = null;
         try {
-            List<Ticket> ticketList = parse.parseTickets(filePath);
-            long minDuration = findMinDuration(ticketList);
-            double diffAvgMed = differenceBetweenAverageAndMedian(ticketList);
-
-            System.out.printf("Minimal flight duration: %s\nDifference between median and average: %.5f",
-                                String.format("%d mins", TimeUnit.MILLISECONDS.toMinutes(minDuration)),
-                                diffAvgMed
-                    );
-
-
+            tickets = parser.parseTickets();
         }
         catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-    }
 
-    public static long findMinDuration(List<Ticket> ticketList) {
-        long min = Integer.MAX_VALUE;
-
-        for (Ticket ticket : ticketList) {
-            min = Math.min(min, ticket.getDurationMillis());
+        List<Ticket> filtered = calculations.filterByPlaces(tickets, origin, destination);
+        long minDuration = calculations.findMinDuration(filtered);
+        double diffAvgMed = calculations.differenceBetweenAverageAndMedian(filtered);
+        StringBuilder minDurationAnswer = new StringBuilder();
+        minDuration = TimeUnit.MILLISECONDS.toMinutes(minDuration);
+        if (minDuration > 59) {
+            minDurationAnswer.append(String.format("%d hours ", (minDuration / 60)));
+        }
+        if (minDuration % 60 != 0) {
+            minDurationAnswer.append(String.format("%d mins", minDuration % 60));
         }
 
-        return min;
-    }
+        System.out.printf("Minimal flight duration: %s\nDifference between median and average: %.3f", minDurationAnswer.toString(), diffAvgMed);
 
-    public static double differenceBetweenAverageAndMedian(List<Ticket> ticketList) {
-        long sum = 0;
 
-        for (Ticket ticket : ticketList) {
-            sum+=ticket.getPrice();
-        }
-
-        Collections.sort(ticketList, Comparator.comparingInt(Ticket::getPrice));
-
-        double median = 0;
-        int n = ticketList.size();
-        if (n % 2 == 0) {
-            median = ticketList.get(n/2).getPrice() + ticketList.get((n/2) -1).getPrice();
-            median/=2.0;
-        } else {
-            median = ticketList.get(n/2).getPrice()/1.0;
-        }
-
-        double avg = sum /1.0/ticketList.size();
-
-        return Math.abs(avg - median);
     }
 
 }

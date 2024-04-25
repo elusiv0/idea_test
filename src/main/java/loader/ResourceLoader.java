@@ -3,7 +3,13 @@ package loader;
 import java.io.InputStream;
 
 public class ResourceLoader {
-    public InputStream getResourceInputStream(String filePath) throws IllegalArgumentException {
+    private String filePath;
+
+    public ResourceLoader(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public InputStream getResourceInputStream() throws IllegalArgumentException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
 
         if (inputStream == null) {

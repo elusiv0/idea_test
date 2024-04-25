@@ -18,14 +18,14 @@ public class Parser {
     private ObjectMapper objectMapper;
     private ResourceLoader resourceLoader;
 
-    public Parser() {
-        objectMapper = new ObjectMapper();
-        resourceLoader = new ResourceLoader();
+    public Parser(ObjectMapper objectMapper, ResourceLoader resourceLoader) {
+        this.objectMapper = objectMapper;
+        this.resourceLoader = resourceLoader;
         objectMapper.registerModule(new JavaTimeModule());
     }
 
-    public List<Ticket> parseTickets(String filePath) throws IllegalArgumentException, IOException, DatabindException, StreamReadException {
-        InputStream inputStream = resourceLoader.getResourceInputStream(filePath);
+    public List<Ticket> parseTickets() throws IllegalArgumentException, IOException, DatabindException, StreamReadException {
+        InputStream inputStream = resourceLoader.getResourceInputStream();
 
         Tickets tickets = objectMapper.readValue(inputStream, Tickets.class);
 

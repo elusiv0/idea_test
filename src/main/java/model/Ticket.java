@@ -64,4 +64,12 @@ public class Ticket {
     public int getPrice() {
         return this.price;
     }
+
+    public String getOrigin() {
+        return this.origin;
+    }
+
+    public String getDestination() {
+        return this.destination;
+    }
 }
