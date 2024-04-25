@@ -3,21 +3,13 @@ import loader.ResourceLoader;
 import model.Ticket;
 import parser.Parser;
 import util.Calculations;
-
-import java.io.File;
-import java.io.InputStream;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static final String ORIGIN_DEFAULT = "VVO";
     private static final String DESTINATION_DEFAULT = "TLV";
-    private static final String FILE_PATH = "tickets.json";
+    private static final String FILE_PATH = "tickes.json";
 
     public static void main(String[] args) throws Exception {
         String origin = ORIGIN_DEFAULT;
@@ -38,6 +30,7 @@ public class Main {
         }
         catch (Exception ex) {
             System.out.println(ex.getMessage());
+            return;
         }
 
         List<Ticket> filtered = calculations.filterByPlaces(tickets, origin, destination);
